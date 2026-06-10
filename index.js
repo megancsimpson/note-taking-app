@@ -17,6 +17,10 @@ mongoose.connect(process.env.MONGO_CONNECTION_STRING);
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
+// Logger middleware
+const logger = require('./middleware/logger');
+app.use(logger); 
+
 // Google login Middleware
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -32,10 +36,13 @@ app.use(express.static('public'));
 
 // Routes
 const authRouter = require('./routes/auth');
+const adminRouter = require('./routes/admin');
+const crashRouter = require('./routes/crash');
 
 app.use("/", homeRouter);
 app.use("/", authRouter);
-
+app.use("/admin", adminRouter);
+app.use("/crash", crashRouter);
 
 
 // Centralized error handler
