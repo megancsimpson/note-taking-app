@@ -3,7 +3,10 @@ const router = express.Router();
 
 // Home route
 router.get('/', (req, res) => {
-    res.render('home', { title: 'Home' });
+  res.render('home', {
+    title: 'Home',
+    user: req.user || null
+  });
 });
 
 // Export the router to be used in index.js
