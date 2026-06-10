@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment variables (VERY important)
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+
+# Coverage reports (tests)
+coverage/
+
+# Build output (if you ever add frontend build tools)
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
