@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <h1><%= title %></h1>
+    <p>Signed in as <%= user.displayName %></p>
+    <a href="/logout">Sign out</a>
+  </header>
+
+  <section class="note-form">
+    <h2>Create a new note</h2>
+    <form action="/notes" method="POST">
+      <label>
+        Title
+        <input type="text" name="title" required>
+      </label>
+      <label>
+        Content
+        <textarea name="content" rows="4"></textarea>
+      </label>
+      <button type="submit">Save note</button>
+    </form>
+  </section>
+
+  <section class="note-list">
+    <h2>Your notes</h2>
+    <% if (notes.length === 0) { %>
+      <p>No notes yet. Create one above.</p>
+    <% } else { %>
+      <ul>
+        <% notes.forEach((note) => { %>
+          <li>
+            <h3><%= note.title %></h3>
+            <p><%= note.content %></p>
+            <div class="note-actions">
+              <a href="/notes/<%= note._id %>/edit">Edit</a>
+              <form action="/notes/<%= note._id %>/delete" method="POST" style="display:inline">
+                <button type="submit">Delete</button>
+              </form>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </section>
+</body>
+</html>

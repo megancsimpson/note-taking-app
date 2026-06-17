@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <h1><%= title %></h1>
+    <p>Signed in as <%= user.displayName %></p>
+    <a href="/notes">Back to notes</a>
+    <a href="/logout">Sign out</a>
+  </header>
+
+  <section class="note-form">
+    <form action="/notes/<%= note._id %>" method="POST">
+      <label>
+        Title
+        <input type="text" name="title" value="<%= note.title %>" required>
+      </label>
+      <label>
+        Content
+        <textarea name="content" rows="6"><%= note.content %></textarea>
+      </label>
+      <button type="submit">Update note</button>
+    </form>
+  </section>
+</body>
+</html>

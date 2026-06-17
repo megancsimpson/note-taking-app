@@ -36,11 +36,13 @@ app.use(express.static('public'));
 
 // Routes
 const authRouter = require('./routes/auth');
+const notesRouter = require('./routes/notes');
 const adminRouter = require('./routes/admin');
 const crashRouter = require('./routes/crash');
 
 app.use("/", homeRouter);
 app.use("/", authRouter);
+app.use("/notes", notesRouter);
 app.use("/admin", adminRouter);
 app.use("/crash", crashRouter);
 
