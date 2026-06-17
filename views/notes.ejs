@@ -28,11 +28,21 @@
     </form>
   </section>
 
+  <section class="note-search">
+    <form action="/notes/search" method="GET">
+      <input type="text" name="q" placeholder="Search notes by title..." value="<%= searchQuery || '' %>">
+      <button type="submit">Search</button>
+      <% if (searchQuery) { %>
+        <a href="/notes">Clear</a>
+      <% } %>
+    </form>
+  </section>
+
   <section class="note-list">
-    <h2>Your notes</h2>
-    <% if (notes.length === 0) { %>
-      <p>No notes yet. Create one above.</p>
-    <% } else { %>
+    <h2><%= searchQuery ? 'Search Results' : 'Your notes' %></h2>
+    <% if (displayMessage) { %>
+      <p><%= displayMessage %></p>
+    <% } else if (notes.length > 0) { %>
       <ul>
         <% notes.forEach((note) => { %>
           <li>

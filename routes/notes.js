@@ -10,6 +10,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 router.get('/', ensureAuthenticated, notesController.listNotes);
+router.get('/search', ensureAuthenticated, notesController.searchNotes);
 router.post('/', ensureAuthenticated, notesController.createNote);
 router.get('/:id/edit', ensureAuthenticated, notesController.showEditNote);
 router.post('/:id', ensureAuthenticated, notesController.updateNote);
