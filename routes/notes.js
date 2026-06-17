@@ -13,7 +13,7 @@ router.get('/', ensureAuthenticated, notesController.listNotes);
 router.get('/search', ensureAuthenticated, notesController.searchNotes);
 router.post('/', ensureAuthenticated, notesController.createNote);
 router.get('/:id/edit', ensureAuthenticated, notesController.showEditNote);
-router.post('/:id', ensureAuthenticated, notesController.updateNote);
-router.post('/:id/delete', ensureAuthenticated, notesController.deleteNote);
+router.put('/:id', ensureAuthenticated, notesController.updateNote);
+router.delete('/:id', ensureAuthenticated, notesController.deleteNote);
 
 module.exports = router;

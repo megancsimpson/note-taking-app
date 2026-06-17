@@ -3,12 +3,12 @@ require('dotenv').config();
 // Importing required modules
 const session = require('express-session');
 const passport = require('passport');
+const methodOverride = require('method-override');
 require('./config/passport');
 const homeRouter = require('./routes/home');
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
-app.use(express.static("public"));
 
 // Connecting to MongoDB
 mongoose.connect(process.env.MONGO_CONNECTION_STRING);
@@ -16,6 +16,7 @@ mongoose.connect(process.env.MONGO_CONNECTION_STRING);
 // Setup EJS
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 
 // Logger middleware
 const logger = require('./middleware/logger');

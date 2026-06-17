@@ -47,10 +47,12 @@
         <% notes.forEach((note) => { %>
           <li>
             <h3><%= note.title %></h3>
+            <p class="note-meta">Created: <%= new Date(note.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></p>
             <p><%= note.content %></p>
             <div class="note-actions">
               <a href="/notes/<%= note._id %>/edit">Edit</a>
-              <form action="/notes/<%= note._id %>/delete" method="POST" style="display:inline">
+              <form action="/notes/<%= note._id %>" method="POST" style="display:inline">
+                <input type="hidden" name="_method" value="DELETE">
                 <button type="submit">Delete</button>
               </form>
             </div>
