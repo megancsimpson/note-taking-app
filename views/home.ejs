@@ -4,24 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-5W0EZpGmCU5+M8G6k6kRvqY0C30tSXf98gkBCx9hqHV+Ic5Dbon2kzvPT2JZ9twd" crossorigin="anonymous">
     <link rel="stylesheet" href="/styles.css">
 </head>
-</head>
-<body>
-    <header>
-        <h1><%= title %></h1>
+<body class="bg-soft">
+  <div class="app-shell min-vh-100 d-flex flex-column">
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/">Note App</a>
+        <nav class="nav-links">
+          <a class="nav-link-custom" href="/">Home</a>
+          <a class="nav-link-custom" href="/notes">Notes</a>
+          <a class="nav-link-custom" href="/about">About</a>
+        </nav>
+        <div class="header-cta">
+          <% if (user) { %>
+            <a class="nav-link-custom" href="/logout">Sign out</a>
+          <% } else { %>
+            <a class="nav-link-custom" href="/auth/google">Login</a>
+          <% } %>
+        </div>
+      </div>
     </header>
-<% if (user) { %>
-    <p>Welcome, <%= user.displayName %>!</p>
-    <p><%= user.emails[0].value %></p>
-    <img src="<%= user.photos[0].value %>" alt="avatar" width="64">
-    <br><br>
-    <a href="/notes">My notes</a> | <a href="/logout">Sign out</a>
-  <% } else { %>
-    <h1>My App</h1>
-    <p>Sign in to continue.</p>
-    <a href="/auth/google">Sign in with Google</a>
-  <% } %>
-</body>
 
+    <main class="page-content flex-grow-1">
+      <section class="hero-panel">
+        <div>
+          <h1 class="page-title">My Notes App</h1>
+          <p class="section-copy">A full-stack note-taking application built to demonstrate server-side JavaScript, API development, and seamless integration between the front-end and back-end.</p>
+        </div>
+
+        <div class="header-actions mt-4">
+          <% if (user) { %>
+            <a class="btn-modern btn-modern-primary" href="/notes">Continue to notes</a>
+          <% } else { %>
+            <a class="btn-modern btn-modern-primary" href="/auth/google">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z" fill="currentColor"/></svg>
+              <span>login with google</span>
+            </a>
+          <% } %>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer mt-auto py-5">
+      <div class="footer-grid mx-auto px-3">
+        <div class="footer-column">
+          <p class="footer-label mb-2">Built with</p>
+          <p class="mb-1">JavaScript · Node.js · Express · MongoDB</p>
+          <p class="mb-1">Mongoose · EJS · Bootstrap</p>
+          <p class="mb-0">Passport / Google OAuth</p>
+        </div>
+        <div class="footer-column">
+          <p class="footer-label mb-2">Contact</p>
+          <p class="mb-1">support@megan-simpson.example</p>
+          <p class="mb-1">+1 (555) 123-4567</p>
+          <p class="mb-0">GitHub: <a href="#" class="footer-link">github.com/megan-simpson</a></p>
+        </div>
+        <div class="footer-column">
+          <p class="footer-label mb-2">Made by</p>
+          <p class="mb-0">Megan Simpson</p>
+          <p class="mb-0">Software development student</p>
+        </div>
+        <div class="footer-note text-center text-muted">
+          <p class="mb-0">© 2026 Megan Simpson</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-d93c3Mvqd6i8x7hYaI7v55dB6Y4TRFaLMfv6VxsgQ1z0B9VIjK1Qgx9JCYFDVg71" crossorigin="anonymous"></script>
+</body>
 </html>

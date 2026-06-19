@@ -15,8 +15,30 @@ mongoose.connect(process.env.MONGO_CONNECTION_STRING);
 
 // Setup EJS
 app.set('view engine', 'ejs');
+
+// Body parsers: ensure we parse JSON and urlencoded bodies before method-override
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride('_method'));
+
+// Robust method-override: honor header, form body `_method`, or query param
+app.use(methodOverride(function (req, res) {
+    // X-HTTP-Method-Override header (common for proxies/clients)
+    const header = req.headers['x-http-method-override'];
+    if (header) return header;
+
+    // If body has _method (from forms), use and remove it
+    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+        const method = req.body._method;
+        delete req.body._method;
+        return method;
+    }
+
+    // Also support ?_method=DELETE in querystring
+    if (req.query && '_method' in req.query) {
+        return req.query._method;
+    }
+    return undefined;
+}));
 
 // Logger middleware
 const logger = require('./middleware/logger');
