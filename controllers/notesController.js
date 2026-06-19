@@ -1,15 +1,64 @@
 const Note = require('../models/Note');
 const sanitizeHtml = require('sanitize-html');
 
+const decodeHtmlEntities = (text = '') => {
+  return text
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&#x([0-9A-Fa-f]+);/g, (_match, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_match, num) => String.fromCharCode(Number(num)));
+};
+
+const htmlToText = (html = '') => {
+  if (!html) return '';
+
+  const withBreaks = html
+    .replace(/<\s*li[^>]*>/gi, '- ')
+    .replace(/<\s*br[^>]*>/gi, '\n')
+    .replace(/<\s*\/\s*(p|div|h[1-6]|li|tr|table|blockquote)[^>]*>/gi, '\n')
+    .replace(/<\s*\/\s*(ul|ol|thead|tbody|tfoot)[^>]*>/gi, '\n');
+
+  const noTags = withBreaks.replace(/<[^>]+>/g, ' ');
+  const decoded = decodeHtmlEntities(noTags);
+  return decoded.replace(/\s+/g, ' ').trim();
+};
+
+const generatePreview = (html, maxLen = 120) => {
+  const text = htmlToText(html);
+  if (text) {
+    return text.length <= maxLen ? text : `${text.slice(0, maxLen).trimEnd()}...`;
+  }
+
+  const fallback = sanitizeHtml(html || '', {
+    allowedTags: [],
+    allowedAttributes: {},
+  }).replace(/\s+/g, ' ').trim();
+
+  if (fallback) {
+    return fallback.length <= maxLen ? fallback : `${fallback.slice(0, maxLen).trimEnd()}...`;
+  }
+
+  return 'No content available';
+};
+
 exports.listNotes = async (req, res) => {
   try {
     const notes = await Note.find({ userId: req.user.id }).sort({ updatedAt: -1 });
+    const notesWithPreview = notes.map((note) => ({
+      ...note.toObject(),
+      preview: generatePreview(note.content),
+    }));
+
     const displayMessage = req.query.message
       ? req.query.message
       : notes.length === 0
         ? 'No notes yet. Create one above.'
         : null;
-    res.render('notes', { title: 'My Notes', user: req.user, notes, searchQuery: null, displayMessage });
+    res.render('notes', { title: 'My Notes', user: req.user, notes: notesWithPreview, searchQuery: null, displayMessage });
   } catch (err) {
     res.status(500).send('Unable to load notes');
   }
@@ -100,11 +149,16 @@ exports.searchNotes = async (req, res) => {
       title: { $regex: `^${query}`, $options: 'i' }
     }).sort({ updatedAt: -1 });
     
+    const notesWithPreview = notes.map((note) => ({
+      ...note.toObject(),
+      preview: generatePreview(note.content),
+    }));
+
     const displayMessage = notes.length === 0 ? `No notes found matching "${query}"` : null;
     res.render('notes', {
       title: 'Search Results',
       user: req.user,
-      notes,
+      notes: notesWithPreview,
       searchQuery: query,
       displayMessage
     });
