@@ -4,103 +4,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-5W0EZpGmCU5+M8G6k6kRvqY0C30tSXf98gkBCx9hqHV+Ic5Dbon2kzvPT2JZ9twd" crossorigin="anonymous">
   <link rel="stylesheet" href="/styles.css">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <%- include('partials/ui-overrides') %>
 </head>
 <body class="bg-soft">
   <div class="app-shell min-vh-100 d-flex flex-column">
-
-    <header class="site-header">
-      <div class="header-inner">
-        <a class="brand" href="/">Note App</a>
-        <nav class="nav-links">
-          <a class="nav-link-custom" href="/">Home</a>
-          <a class="nav-link-custom" href="/notes">Notes</a>
-          <a class="nav-link-custom" href="/about">About</a>
-        </nav>
-        <div class="header-cta">
-          <% if (user) { %>
-            <a class="nav-link-custom" href="/logout">Sign out</a>
-          <% } else { %>
-            <a class="nav-link-custom" href="/auth/google">Login</a>
-          <% } %>
-        </div>
-      </div>
-    </header>
+    <%- include('partials/header', { user: user }) %>
 
     <main class="page-content flex-grow-1">
-      <div class="notes-header mb-4 d-flex flex-column gap-3">
-        <div>
-          <h1 class="page-title mb-2"><%= title %></h1>
-          <p class="section-copy">Edit your note in a calm, clear space.</p>
-        </div>
-        <div class="text-muted small">
-          Signed in as <strong><%= user.displayName %></strong>
-          <br>
-          Created: <%= new Date(note.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+      <section class="surface-stack editor-page">
+      <div class="notes-header editor-header-minimal">
+        <div class="editor-header-copy">
+          <h1 class="page-title mb-0">Edit</h1>
+          <p class="user-identity-line">Logged in as: <strong><%= user.displayName %></strong></p>
         </div>
       </div>
 
-      <div class="card shadow-sm rounded-4 border-0 p-4">
-        <form id="edit-note-form" action="/notes/<%= note._id %>" method="POST" class="d-flex flex-column gap-3">
+        <form id="edit-note-form" action="/notes/<%= note._id %>" method="POST" class="editor-form d-flex flex-column gap-3">
           <input type="hidden" name="_method" value="PUT">
-          <div>
-            <label class="form-label fw-semibold">Title</label>
-            <input class="form-control" type="text" name="title" value="<%= note.title %>" required>
+          <div class="editor-shell">
+            <div class="editor-surface">
+              <div class="editor-toolbar-shell">
+              <div id="quill-toolbar">
+                <select class="ql-header" title="Heading">
+                  <option selected></option>
+                  <option value="1">H1</option>
+                  <option value="2">H2</option>
+                  <option value="3">H3</option>
+                </select>
+                <button class="ql-bold" title="Bold"></button>
+                <button class="ql-italic" title="Italic"></button>
+                <button class="ql-underline" title="Underline"></button>
+                <button class="ql-strike" title="Strikethrough"></button>
+                <button class="ql-list" value="ordered" title="Numbered list"></button>
+                <button class="ql-list" value="bullet" title="Bulleted list"></button>
+                <button id="ql-check" type="button" title="Checklist">☑</button>
+              </div>
+              </div>
+
+              <div class="editor-region">
+                <div
+                  id="title-editor"
+                  class="note-title-editor"
+                  contenteditable="true"
+                  role="textbox"
+                  aria-label="Note title"
+                  data-placeholder="Title"
+                ><%= note.title %></div>
+                <div id="editor"></div>
+              </div>
+
+              <div class="editor-actions editor-actions-inline">
+                <a class="btn-clear editor-action editor-action-secondary" href="/notes">Cancel</a>
+                <button class="btn-modern editor-action editor-action-primary" id="save-button" type="submit">
+                  <span>Save</span>
+                </button>
+                <button id="delete-button" class="btn-modern editor-action editor-action-danger" type="submit" form="delete-form">Delete</button>
+              </div>
+            </div>
           </div>
 
-          <!-- Formatting toolbar (Quill) -->
-          <div id="quill-toolbar" class="mb-2">
-            <select class="ql-header" title="Heading">
-              <option selected></option>
-              <option value="1">H1</option>
-              <option value="2">H2</option>
-              <option value="3">H3</option>
-            </select>
-            <button class="ql-bold" title="Bold"></button>
-            <button class="ql-italic" title="Italic"></button>
-            <button class="ql-underline" title="Underline"></button>
-            <button class="ql-strike" title="Strikethrough"></button>
-            <button class="ql-list" value="ordered" title="Numbered list"></button>
-            <button class="ql-list" value="bullet" title="Bulleted list"></button>
-            <button id="ql-check" type="button" title="Checklist">☑</button>
-          </div>
-
-          <!-- Editor -->
-          <div id="editor" class="mb-2" style="min-height: 320px;"></div>
-
-          <!-- Hidden input to send HTML content -->
+          <input type="hidden" name="title" id="title-input">
           <input type="hidden" name="content" id="content-input">
-
-          <div class="d-flex flex-column flex-sm-row gap-3 align-items-center justify-content-end">
-            <a class="btn-clear" href="/notes">Cancel</a>
-
-            <form id="delete-form" action="/notes/<%= note._id %>" method="POST" class="m-0">
-              <input type="hidden" name="_method" value="DELETE">
-              <button id="delete-button" class="btn-modern btn-modern-danger" type="submit">Delete</button>
-            </form>
-
-            <button class="btn-modern btn-modern-primary" id="save-button" type="submit">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4 4L19 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span class="ms-2">Update note</span>
-            </button>
-          </div>
         </form>
-      </div>
+        <form id="delete-form" action="/notes/<%= note._id %>" method="POST" class="delete-form d-none">
+          <input type="hidden" name="_method" value="DELETE">
+        </form>
 
-      <!-- Quill resources and initialization -->
-      <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
       <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-      <style>
-        /* Small page-specific styles to keep editor clean and responsive */
-        #quill-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
-        #quill-toolbar .ql-header { padding:6px 8px; border-radius:8px; border:1px solid rgba(15,23,42,0.06); }
-        #quill-toolbar button { background:transparent; border:1px solid rgba(15,23,42,0.04); border-radius:8px; padding:6px 8px; }
-        #editor .ql-editor { font-family: Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial; font-size:16px; line-height:1.6; }
-        #editor { border:1px solid rgba(15,23,42,0.06); border-radius:10px; background:var(--surface); padding:12px; }
-        @media (max-width:640px){ #editor{min-height:220px} }
-      </style>
-
       <script>
         (function(){
           var toolbarOptions = '#quill-toolbar';
@@ -109,9 +85,21 @@
               toolbar: toolbarOptions,
               history: { delay: 1000, maxStack: 500, userOnly: true }
             },
-            placeholder: 'Write your note here…',
+            placeholder: 'Write your note here',
             theme: 'snow'
           });
+          var checklistButton = document.getElementById('ql-check');
+
+          function syncChecklistState() {
+            var range = quill.getSelection();
+            if (!range) {
+              checklistButton.classList.remove('is-active');
+              return;
+            }
+
+            var formats = quill.getFormat(range);
+            checklistButton.classList.toggle('is-active', formats.list === 'checked');
+          }
 
           // Load existing HTML content (unescaped)
           var existing = `<%- (note.content || '') %>`;
@@ -120,7 +108,7 @@
           }
 
           // Checklist toggle: attempt to set list format to 'checked' for checkbox lists
-          document.getElementById('ql-check').addEventListener('click', function(){
+          checklistButton.addEventListener('click', function(){
             var range = quill.getSelection(true);
             if(!range) return;
             var formats = quill.getFormat(range);
@@ -130,11 +118,42 @@
             } else {
               quill.format('list', 'checked');
             }
+            syncChecklistState();
           });
+
+          quill.on('selection-change', syncChecklistState);
+
+          quill.on('text-change', syncChecklistState);
+
+          var titleEditor = document.getElementById('title-editor');
+          var titleInput = document.getElementById('title-input');
+
+          function normalizeTitleEditor() {
+            if (titleEditor.innerHTML === '<br>' || titleEditor.textContent.trim() === '') {
+              titleEditor.innerHTML = '';
+            }
+          }
+
+          titleEditor.addEventListener('keydown', function(event){
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              quill.focus();
+              quill.setSelection(0, 0, 'user');
+            }
+          });
+
+          titleEditor.addEventListener('input', normalizeTitleEditor);
 
           // On form submit: put HTML into hidden input
           var form = document.getElementById('edit-note-form');
-          form.addEventListener('submit', function(e){
+          form.addEventListener('submit', function(event){
+            normalizeTitleEditor();
+            titleInput.value = titleEditor.textContent.trim();
+            if (!titleInput.value) {
+              event.preventDefault();
+              titleEditor.focus();
+              return;
+            }
             var html = quill.root.innerHTML;
             document.getElementById('content-input').value = html;
           });
@@ -144,37 +163,14 @@
           delForm.addEventListener('submit', function(e){
             if(!confirm('Delete this note? This action cannot be undone.')) e.preventDefault();
           });
+
+          syncChecklistState();
         })();
       </script>
+      </section>
     </main>
 
-    <footer class="footer mt-auto py-5">
-      <div class="footer-description mx-auto px-3 mb-4">
-        <p class="text-muted mb-0">A full-stack note-taking application built to demonstrate server-side JavaScript, API development, and seamless integration between the front-end and back-end.</p>
-      </div>
-      <div class="footer-grid mx-auto px-3">
-        <div class="footer-column">
-          <p class="footer-label mb-2">Built with</p>
-          <p class="mb-1">JavaScript · Node.js · Express · MongoDB</p>
-          <p class="mb-1">Mongoose · EJS · Bootstrap</p>
-          <p class="mb-0">Passport / Google OAuth</p>
-        </div>
-        <div class="footer-column">
-          <p class="footer-label mb-2">Contact</p>
-          <p class="mb-1">megancatherinesimpson@gmail.com</p>
-          <p class="mb-1"><a href="https://linkedin.com/in/megancsimpson" target="_blank">linkedin.com/in/megancsimpson</a></p>
-          <p class="mb-0">GitHub: <a href="#" class="footer-link">github.com/megan-simpson</a></p>
-        </div>
-        <div class="footer-column">
-          <p class="footer-label mb-2">Made by</p>
-          <p class="mb-0">Megan Simpson</p>
-          <p class="mb-0">Software development student</p>
-        </div>
-        <div class="footer-note text-center text-muted">
-          <p class="mb-0">© 2026 Megan Simpson</p>
-        </div>
-      </div>
-    </footer>
+    <%- include('partials/footer') %>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-d93c3Mvqd6i8x7hYaI7v55dB6Y4TRFaLMfv6VxsgQ1z0B9VIjK1Qgx9JCYFDVg71" crossorigin="anonymous"></script>
 </body>

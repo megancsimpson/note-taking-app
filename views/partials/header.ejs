@@ -1,0 +1,17 @@
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="/">Note App</a>
+    <nav class="nav-links">
+      <a class="nav-link-custom" href="/">Home</a>
+      <a class="nav-link-custom" href="/notes">Notes</a>
+      <a class="nav-link-custom" href="/about">About</a>
+    </nav>
+    <div class="header-cta">
+      <% if (user) { %>
+        <a class="nav-link-custom" href="/logout">Sign out</a>
+      <% } else { %>
+        <a class="nav-link-custom" href="/auth/google">Login</a>
+      <% } %>
+    </div>
+  </div>
+</header>
