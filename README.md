@@ -179,6 +179,11 @@ note-taking-app/
 - Add autosave and note history
 - Add real-time sync/collaboration features
 
+## Reflection on Development Process and Lessons Learned
+- Building a full stack app from start to finish for the first time definitely had its challenges. I developed a much more indepth understanding of the MVC structure, and how different pages call eachother, are exported, and are related. I started a new project and used what we used in class to base it on, because I really needed to understand the setup, routes, controllers better and how to organize them. I was very intimidated at first but learned to really like the organization and structure it has, once I understood it more.
+- I learned a lot about AI prompting, and token usage. I quickly had to let go of bad habits, as I was running out of tokens quickly and my AI was not understanding what I wanted done, specifically for the front end design aspect of this project. I was seeing the same issues not resolving, such as random text appearing, weirdly designed headers and containers, and overall bad design. I had to brush up on the AI prompting we learned in class and began to see a big change, and rather than fighting with AI (how it felt) I started to actually work with it.
+- Github was a big peice of this for me. I had to get very familliar with how to create branches, switching branches, staging changes, pushing, pulling, etc. At first I was constantly looking up how to do this all, but after working with it for this project I feel a lot more confident in my abilities to use github.
+
 ## Author
 **Megan Simpson**  
 Software Development Student
