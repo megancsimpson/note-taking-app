@@ -1,17 +1,71 @@
 <header class="site-header">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="header-inner">
     <a class="brand" href="/">Note App</a>
-    <nav class="nav-links">
-      <a class="nav-link-custom" href="/">Home</a>
-      <a class="nav-link-custom" href="/notes">Notes</a>
-      <a class="nav-link-custom" href="/about">About</a>
-    </nav>
-    <div class="header-cta">
-      <% if (user) { %>
-        <a class="nav-link-custom" href="/logout">Sign out</a>
-      <% } else { %>
-        <a class="nav-link-custom" href="/auth/google">Login</a>
-      <% } %>
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="primary-menu"
+      aria-label="Toggle navigation menu"
+    >
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <div class="header-menu" id="primary-menu" data-collapsed="true">
+      <nav class="nav-links" aria-label="Primary">
+        <a class="nav-link-custom" href="/">Home</a>
+        <a class="nav-link-custom" href="/notes">Notes</a>
+        <a class="nav-link-custom" href="/about">About</a>
+      </nav>
+      <div class="header-cta">
+        <% if (user) { %>
+          <a class="nav-link-custom" href="/logout">Sign out</a>
+        <% } else { %>
+          <a class="nav-link-custom" href="/auth/google">Login</a>
+        <% } %>
+      </div>
     </div>
   </div>
 </header>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('.nav-toggle');
+    var menu = document.getElementById('primary-menu');
+    if (!toggle || !menu) return;
+
+    function closeMenu() {
+      toggle.setAttribute('aria-expanded', 'false');
+      menu.classList.remove('is-open');
+      menu.setAttribute('data-collapsed', 'true');
+    }
+
+    toggle.addEventListener('click', function () {
+      var expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      menu.classList.toggle('is-open', !expanded);
+      menu.setAttribute('data-collapsed', expanded ? 'true' : 'false');
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        closeMenu();
+      }
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 640) {
+        toggle.setAttribute('aria-expanded', 'false');
+        menu.classList.remove('is-open');
+        menu.removeAttribute('data-collapsed');
+        return;
+      }
+
+      if (!menu.classList.contains('is-open')) {
+        menu.setAttribute('data-collapsed', 'true');
+      }
+    });
+  })();
+</script>

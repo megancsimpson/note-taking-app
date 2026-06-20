@@ -16,7 +16,7 @@
   <div class="app-shell min-vh-100 d-flex flex-column">
     <%- include('../partials/header', { user: user }) %>
 
-    <main class="page-content flex-grow-1">
+    <main id="main-content" class="page-content flex-grow-1">
       <section class="surface-stack editor-page">
       <div class="notes-header editor-header-minimal">
         <div class="editor-header-copy">
@@ -29,20 +29,20 @@
           <div class="editor-shell">
             <div class="editor-surface">
               <div class="editor-toolbar-shell">
-              <div id="quill-toolbar">
-                <select class="ql-header" title="Heading">
+              <div id="quill-toolbar" role="toolbar" aria-label="Note formatting toolbar">
+                <select class="ql-header" title="Heading" aria-label="Heading level">
                   <option selected></option>
                   <option value="1">H1</option>
                   <option value="2">H2</option>
                   <option value="3">H3</option>
                 </select>
-                <button class="ql-bold" title="Bold"></button>
-                <button class="ql-italic" title="Italic"></button>
-                <button class="ql-underline" title="Underline"></button>
-                <button class="ql-strike" title="Strikethrough"></button>
-                <button class="ql-list" value="ordered" title="Numbered list"></button>
-                <button class="ql-list" value="bullet" title="Bulleted list"></button>
-                <button id="ql-check" type="button" title="Checklist">☑</button>
+                <button class="ql-bold" type="button" title="Bold" aria-label="Bold"></button>
+                <button class="ql-italic" type="button" title="Italic" aria-label="Italic"></button>
+                <button class="ql-underline" type="button" title="Underline" aria-label="Underline"></button>
+                <button class="ql-strike" type="button" title="Strikethrough" aria-label="Strikethrough"></button>
+                <button class="ql-list" type="button" value="ordered" title="Numbered list" aria-label="Numbered list"></button>
+                <button class="ql-list" type="button" value="bullet" title="Bulleted list" aria-label="Bulleted list"></button>
+                <button id="ql-check" type="button" title="Checklist" aria-label="Checklist">☑</button>
               </div>
               </div>
 

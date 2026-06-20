@@ -15,6 +15,7 @@
   --shadow-soft: rgba(101, 146, 135, 0.09);
   --destructive: #659287;
   --destructive-soft: rgba(101, 146, 135, 0.1);
+  --focus-ring: #2f5f50;
   --radius: 10px;
   --max-width: 1120px;
 }
@@ -25,6 +26,7 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: 100%;
 }
 
 body {
@@ -34,6 +36,21 @@ body {
   color: var(--text);
   font-family: "Noto Sans", "Noto Sans JP", "Segoe UI", Helvetica, Arial, sans-serif;
   line-height: 1.6;
+}
+
+main,
+section,
+article,
+div,
+form,
+.page-content,
+.surface-stack,
+.editor-shell,
+.editor-surface,
+.editor-region,
+.note-card-layout,
+.note-card-copy {
+  min-width: 0;
 }
 
 img,
@@ -47,6 +64,44 @@ a,
 input,
 textarea {
   font: inherit;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[contenteditable="true"]:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -3rem;
+  z-index: 2000;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.5rem;
+  background: var(--text-strong);
+  color: var(--bg);
+  font-weight: 700;
+}
+
+.skip-link:focus-visible {
+  top: 0.75rem;
 }
 
 .app-shell {
@@ -69,6 +124,34 @@ textarea {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.header-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: var(--text-strong);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-toggle-bar {
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
 }
 
 .brand {
@@ -171,6 +254,13 @@ textarea {
   transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
+.icon-action,
+.btn-icon,
+.search-inline-clear {
+  min-width: 44px;
+  min-height: 44px;
+}
+
 .btn-modern:hover,
 .btn-modern:focus-visible {
   transform: translateY(-1px);
@@ -263,6 +353,7 @@ textarea.form-control {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 .note-meta {
@@ -291,8 +382,13 @@ textarea.form-control {
     justify-content: center;
   }
 
-  .nav-links {
+  .header-menu {
     width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .nav-links {
     justify-content: center;
   }
 
@@ -312,6 +408,47 @@ textarea.form-control {
 }
 
 @media (max-width: 640px) {
+  .header-inner {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .header-menu {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding-top: 0.5rem;
+  }
+
+  .header-menu.is-open {
+    display: flex;
+  }
+
+  .nav-links,
+  .header-cta {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .nav-link-custom {
+    width: 100%;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
   .page-content {
     padding: 1.5rem 0.9rem 2.5rem;
   }
@@ -326,9 +463,41 @@ textarea.form-control {
     width: 100%;
   }
 
+  .page-title {
+    font-size: clamp(1.6rem, 8vw, 2rem);
+  }
+
+  .section-copy,
+  .note-summary,
+  .user-identity-line,
+  .form-control,
+  .about-list {
+    font-size: 0.98rem;
+  }
+
   .header-cta,
   .header-inner {
     justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-inner,
+  .page-content {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .note-action-bar {
+    width: 100%;
+    justify-content: flex-start;
   }
 }
 
@@ -339,7 +508,7 @@ textarea.form-control {
   gap: 1.5rem;
   max-width: 860px;
   margin: 0 auto;
-  padding: 0 0.5rem;
+  padding: 0 0.75rem;
 }
 
 .footer-description {
@@ -352,11 +521,20 @@ textarea.form-control {
 .footer-note {
   grid-column: 1 / -1;
   margin-top: 1.25rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border);
 }
 
 .footer-column {
   color: var(--text-muted);
   text-align: center;
+  min-width: 0;
+}
+
+.footer-column p,
+.footer-note p,
+.footer-link {
+  overflow-wrap: anywhere;
 }
 
 .footer-label {
@@ -364,6 +542,41 @@ textarea.form-control {
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 1rem;
+  }
+
+  .footer-note {
+    grid-column: 1 / -1;
+    margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer {
+    padding-top: 1.75rem !important;
+    padding-bottom: 1.75rem !important;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0 0.35rem;
+  }
+
+  .footer-column,
+  .footer-note {
+    text-align: center;
+  }
+
+  .footer-note {
+    grid-column: 1;
+    margin-top: 0.5rem;
+  }
 }
 
 /* Notes page specific styles */

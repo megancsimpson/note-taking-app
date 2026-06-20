@@ -684,4 +684,234 @@
       justify-content: center;
     }
   }
+
+  /* Accessibility and responsive hardening layer */
+  .nav-links,
+  .header-actions,
+  .editor-actions-inline,
+  .note-action-bar,
+  #quill-toolbar {
+    gap: clamp(0.5rem, 1.5vw, 0.9rem);
+  }
+
+  .search-input-shell,
+  .form-control,
+  #editor,
+  #editor .ql-editor,
+  .note-title-editor {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .icon-action,
+  .btn-icon,
+  .search-inline-clear,
+  #quill-toolbar button,
+  #ql-check,
+  #quill-toolbar .ql-header {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  #quill-toolbar {
+    flex-wrap: wrap;
+    align-items: stretch;
+    row-gap: 0.55rem;
+  }
+
+  #quill-toolbar .ql-formats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-right: 0;
+  }
+
+  /* Quill toolbar alignment and sizing consistency */
+  .editor-toolbar-shell {
+    display: flex;
+    justify-content: center;
+  }
+
+  #quill-toolbar {
+    --toolbar-control-size: 2.625rem;
+    --toolbar-header-size: 2.625rem;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, var(--toolbar-control-size)));
+    grid-template-rows: repeat(2, var(--toolbar-control-size));
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    column-gap: 0.55rem;
+    row-gap: 0.55rem;
+  }
+
+  #quill-toolbar .ql-formats {
+    display: contents;
+    margin: 0 !important;
+  }
+
+  #quill-toolbar .ql-picker {
+    display: inline-flex;
+    align-items: center;
+    height: var(--toolbar-control-size);
+    min-width: var(--toolbar-control-size);
+  }
+
+  #quill-toolbar .ql-picker.ql-header {
+    width: var(--toolbar-control-size);
+    min-width: var(--toolbar-control-size);
+  }
+
+  #quill-toolbar button,
+  #quill-toolbar .ql-picker-label,
+  #ql-check {
+    width: var(--toolbar-control-size);
+    height: var(--toolbar-control-size);
+    min-width: var(--toolbar-control-size);
+    min-height: var(--toolbar-control-size);
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  #quill-toolbar .ql-picker.ql-header .ql-picker-label {
+    width: var(--toolbar-control-size);
+    min-width: var(--toolbar-control-size);
+    justify-content: center;
+    padding: 0 0.35rem;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  #quill-toolbar .ql-picker.ql-header .ql-picker-label::before {
+    width: 100%;
+    text-align: center;
+    line-height: 1;
+    white-space: nowrap;
+    font-size: 0.74rem;
+  }
+
+  /* Keep desktop label appearance close to default Quill behavior. */
+  #quill-toolbar .ql-picker.ql-header .ql-picker-label:not([data-value])::before,
+  #quill-toolbar .ql-picker.ql-header .ql-picker-label[data-value=""]::before {
+    content: "Normal";
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  #quill-toolbar .ql-picker.ql-header .ql-picker-label[data-value="1"]::before,
+  #quill-toolbar .ql-picker.ql-header .ql-picker-item[data-value="1"]::before {
+    content: "H1";
+  }
+
+  #quill-toolbar .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,
+  #quill-toolbar .ql-picker.ql-header .ql-picker-item[data-value="2"]::before {
+    content: "H2";
+  }
+
+  #quill-toolbar .ql-picker.ql-header .ql-picker-label[data-value="3"]::before,
+  #quill-toolbar .ql-picker.ql-header .ql-picker-item[data-value="3"]::before {
+    content: "H3";
+  }
+
+  #quill-toolbar button svg {
+    margin: 0 auto;
+  }
+
+  #editor.ql-container,
+  #editor .ql-editor {
+    min-height: clamp(240px, 42vh, 360px);
+  }
+
+  @media (min-width: 901px) {
+    #quill-toolbar {
+      --toolbar-header-size: 4.75rem;
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: center;
+      row-gap: 0;
+    }
+
+    #quill-toolbar .ql-formats {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+      margin: 0;
+    }
+
+    #quill-toolbar .ql-picker.ql-header,
+    #quill-toolbar .ql-picker.ql-header .ql-picker-label {
+      width: var(--toolbar-header-size);
+      min-width: var(--toolbar-header-size);
+      padding: 0 0.5rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .notes-page .notes-header,
+    .editor-header-minimal,
+    .page-topbar,
+    .note-card-layout {
+      align-items: stretch;
+    }
+
+    #quill-toolbar {
+      --toolbar-control-size: 2.5rem;
+      --toolbar-header-size: 2.5rem;
+    }
+
+    /* Use compact icon label on tablet/phone so the heading picker never clips. */
+    #quill-toolbar .ql-picker.ql-header .ql-picker-label:not([data-value])::before,
+    #quill-toolbar .ql-picker.ql-header .ql-picker-label[data-value=""]::before {
+      content: "Aa";
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .editor-actions-inline,
+    .note-action-bar {
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .page-topbar,
+    .notes-header,
+    .editor-header-minimal,
+    .notes-actions {
+      gap: 0.85rem;
+    }
+
+    .editor-actions-inline .editor-action,
+    .note-action-bar .icon-action,
+    .note-action-bar .btn-icon,
+    .notes-page .btn-modern,
+    .editor-page .btn-modern,
+    .editor-page .btn-clear {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .note-card {
+      padding: 1rem !important;
+    }
+
+    #quill-toolbar {
+      --toolbar-control-size: 2.375rem;
+      --toolbar-header-size: 2.375rem;
+      justify-content: center;
+    }
+  }
 </style>
