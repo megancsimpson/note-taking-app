@@ -75,7 +75,7 @@ exports.listNotes = async (req, res) => {
       : notes.length === 0
         ? 'No notes yet. Create one above.'
         : null;
-    res.render('notes', { title: 'My Notes', user: req.user, notes: notesWithPreview, searchQuery: null, displayMessage });
+    res.render('notes/notes', { title: 'My Notes', user: req.user, notes: notesWithPreview, searchQuery: null, displayMessage });
   } catch (err) {
     res.status(500).send('Unable to load notes');
   }
@@ -99,7 +99,7 @@ exports.createNote = async (req, res) => {
 
 exports.showCreateNote = async (req, res) => {
   try {
-    res.render('create-note', { title: 'Create Note', user: req.user });
+    res.render('notes/create-note', { title: 'Create Note', user: req.user });
   } catch (err) {
     res.status(500).send('Unable to load note creation page');
   }
@@ -111,7 +111,7 @@ exports.showEditNote = async (req, res) => {
     if (!note) {
       return res.redirect('/notes');
     }
-    res.render('edit-note', { title: 'Edit Note', user: req.user, note });
+    res.render('notes/edit-note', { title: 'Edit Note', user: req.user, note });
   } catch (err) {
     res.status(500).send('Unable to load note');
   }
@@ -155,7 +155,7 @@ exports.searchNotes = async (req, res) => {
     const notesWithPreview = mapNotesWithPreview(notes);
 
     const displayMessage = notes.length === 0 ? `No notes found matching "${query}"` : null;
-    res.render('notes', {
+    res.render('notes/notes', {
       title: 'Search Results',
       user: req.user,
       notes: notesWithPreview,

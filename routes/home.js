@@ -1,20 +1,10 @@
-const express = require('express'); 
-const router = express.Router(); 
+const express = require('express');
+const homeController = require('../controllers/homeController');
 
-// Home route
-router.get('/', (req, res) => {
-  res.render('home', {
-    title: 'Home',
-    user: req.user || null
-  });
-});
+const router = express.Router();
 
-router.get('/about', (req, res) => {
-  res.render('about', {
-    title: 'About',
-    user: req.user || null
-  });
-});
+router.get('/', homeController.renderHome);
+router.get('/about', homeController.renderAbout);
 
 // Export the router to be used in index.js
 module.exports = router;

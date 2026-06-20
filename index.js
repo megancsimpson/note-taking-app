@@ -1,18 +1,20 @@
-require('dotenv').config();
+const { loadEnv } = require('./config/env');
+loadEnv();
 
-
-// Importing required modules
-const session = require('express-session');
 const passport = require('passport');
-const methodOverride = require('method-override');
-require('./config/passport');
-const homeRouter = require('./routes/home');
 const express = require('express');
-const mongoose = require('mongoose');
+const { connectDatabase } = require('./config/database');
+const { createSessionMiddleware } = require('./config/session');
+const { createMethodOverrideMiddleware } = require('./config/methodOverride');
+const { requestLogger } = require('./middleware/logger');
+const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
+
+require('./config/passport');
 const app = express();
 
-// Connecting to MongoDB
-mongoose.connect(process.env.MONGO_CONNECTION_STRING);
+connectDatabase(process.env.MONGO_CONNECTION_STRING).catch((err) => {
+    console.error('MongoDB connection failed:', err.message);
+});
 
 // Setup EJS
 app.set('view engine', 'ejs');
@@ -20,33 +22,11 @@ app.set('view engine', 'ejs');
 // Body parsers: ensure we parse JSON and urlencoded bodies before method-override
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(requestLogger);
 
-// Robust method-override: honor header, form body `_method`, or query param
-app.use(methodOverride(function (req, res) {
-    // X-HTTP-Method-Override header (common for proxies/clients)
-    const header = req.headers['x-http-method-override'];
-    if (header) return header;
+app.use(createMethodOverrideMiddleware());
 
-    // If body has _method (from forms), use and remove it
-    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-        const method = req.body._method;
-        delete req.body._method;
-        return method;
-    }
-
-    // Also support ?_method=DELETE in querystring
-    if (req.query && '_method' in req.query) {
-        return req.query._method;
-    }
-    return undefined;
-}));
-
-// Google login Middleware
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
-}));
+app.use(createSessionMiddleware());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -54,6 +34,7 @@ app.use(passport.session());
 app.use(express.static('public'));
 
 // Routes
+const homeRouter = require('./routes/home');
 const authRouter = require('./routes/auth');
 const notesRouter = require('./routes/notes');
 const adminRouter = require('./routes/admin');
@@ -66,10 +47,8 @@ app.use("/admin", adminRouter);
 app.use("/crash", crashRouter);
 
 
-// Centralized error handler
-app.use((err, req, res, next) => {
-    res.status(500).json({ message: err.message });
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 
 // Listen to requests on PORT 3000 if this file is run directly

@@ -1,12 +1,11 @@
 const express = require("express");
 
-const auth = require("../middleware/auth");
+const adminController = require('../controllers/adminController');
+const { ensureToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get("/", auth, (req, res) => {
-  res.send("Welcome Admin");
-});
+router.get('/', ensureToken, adminController.getAdminHome);
 
 module.exports = router;
 

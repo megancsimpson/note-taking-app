@@ -1,13 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const notesController = require('../controllers/notesController');
-
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/');
-}
+const { ensureAuthenticated } = require('../middleware/auth');
 
 router.get('/', ensureAuthenticated, notesController.listNotes);
 router.get('/search', ensureAuthenticated, notesController.searchNotes);
