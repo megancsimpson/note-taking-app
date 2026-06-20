@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+
 // Importing required modules
 const session = require('express-session');
 const passport = require('passport');
@@ -40,10 +41,6 @@ app.use(methodOverride(function (req, res) {
     return undefined;
 }));
 
-// Logger middleware
-const logger = require('./middleware/logger');
-app.use(logger); 
-
 // Google login Middleware
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -54,7 +51,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // JSON and static files middleware
-app.use(express.json());
 app.use(express.static('public'));
 
 // Routes
