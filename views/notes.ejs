@@ -59,7 +59,7 @@
                   <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
                     <div class="flex-grow-1">
                       <h3 class="h5 mb-2"><%= note.title %></h3>
-                      <p class="note-summary mb-3"><%= note.preview || note.title || 'No content available' %></p>
+                      <p class="note-summary mb-3"><%= note.preview || 'No content available' %></p>
                       <p class="text-muted small mb-0">Created: <%= new Date(note.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></p>
                     </div>
                     <div class="d-flex gap-2 flex-column align-items-start align-items-md-end">

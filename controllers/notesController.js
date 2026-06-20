@@ -1,6 +1,15 @@
 const Note = require('../models/Note');
 const sanitizeHtml = require('sanitize-html');
 
+const NOTE_SANITIZE_OPTIONS = {
+  allowedTags: ['b', 'i', 'em', 'strong', 'u', 's', 'strike', 'h1', 'h2', 'h3', 'p', 'br', 'ul', 'ol', 'li', 'hr', 'a', 'div', 'span', 'input'],
+  allowedAttributes: {
+    a: ['href', 'name', 'target', 'rel'],
+    input: ['type', 'checked', 'class'],
+  },
+  allowedSchemes: ['http', 'https', 'mailto'],
+};
+
 const decodeHtmlEntities = (text = '') => {
   return text
     .replace(/&nbsp;/gi, ' ')
@@ -16,15 +25,17 @@ const decodeHtmlEntities = (text = '') => {
 const htmlToText = (html = '') => {
   if (!html) return '';
 
-  const withBreaks = html
+  const decodedHtml = decodeHtmlEntities(html);
+  const withBreaks = decodedHtml
     .replace(/<\s*li[^>]*>/gi, '- ')
-    .replace(/<\s*br[^>]*>/gi, '\n')
+    .replace(/<\s*br\s*\/?>/gi, '\n')
     .replace(/<\s*\/\s*(p|div|h[1-6]|li|tr|table|blockquote)[^>]*>/gi, '\n')
     .replace(/<\s*\/\s*(ul|ol|thead|tbody|tfoot)[^>]*>/gi, '\n');
 
-  const noTags = withBreaks.replace(/<[^>]+>/g, ' ');
-  const decoded = decodeHtmlEntities(noTags);
-  return decoded.replace(/\s+/g, ' ').trim();
+  return withBreaks
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 };
 
 const generatePreview = (html, maxLen = 120) => {
@@ -45,13 +56,19 @@ const generatePreview = (html, maxLen = 120) => {
   return 'No content available';
 };
 
+const sanitizeNoteContent = (content = '') => sanitizeHtml(content, NOTE_SANITIZE_OPTIONS);
+
+const mapNotesWithPreview = (notes) => {
+  return notes.map((note) => ({
+    ...note.toObject(),
+    preview: generatePreview(note.content),
+  }));
+};
+
 exports.listNotes = async (req, res) => {
   try {
     const notes = await Note.find({ userId: req.user.id }).sort({ updatedAt: -1 });
-    const notesWithPreview = notes.map((note) => ({
-      ...note.toObject(),
-      preview: generatePreview(note.content),
-    }));
+    const notesWithPreview = mapNotesWithPreview(notes);
 
     const displayMessage = req.query.message
       ? req.query.message
@@ -66,14 +83,7 @@ exports.listNotes = async (req, res) => {
 
 exports.createNote = async (req, res) => {
   try {
-    const cleanContent = sanitizeHtml(req.body.content || '', {
-      allowedTags: ['b','i','em','strong','u','s','strike','h1','h2','h3','p','br','ul','ol','li','hr','a','div','span','input'],
-      allowedAttributes: {
-        a: ['href','name','target','rel'],
-        input: ['type','checked','class']
-      },
-      allowedSchemes: ['http','https','mailto']
-    });
+    const cleanContent = sanitizeNoteContent(req.body.content || '');
 
     const note = new Note({
       userId: req.user.id,
@@ -109,14 +119,7 @@ exports.showEditNote = async (req, res) => {
 
 exports.updateNote = async (req, res) => {
   try {
-    const cleanContent = sanitizeHtml(req.body.content || '', {
-      allowedTags: ['b','i','em','strong','u','s','strike','h1','h2','h3','p','br','ul','ol','li','hr','a','div','span','input'],
-      allowedAttributes: {
-        a: ['href','name','target','rel'],
-        input: ['type','checked','class']
-      },
-      allowedSchemes: ['http','https','mailto']
-    });
+    const cleanContent = sanitizeNoteContent(req.body.content || '');
 
     await Note.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.id },
@@ -149,10 +152,7 @@ exports.searchNotes = async (req, res) => {
       title: { $regex: `^${query}`, $options: 'i' }
     }).sort({ updatedAt: -1 });
     
-    const notesWithPreview = notes.map((note) => ({
-      ...note.toObject(),
-      preview: generatePreview(note.content),
-    }));
+    const notesWithPreview = mapNotesWithPreview(notes);
 
     const displayMessage = notes.length === 0 ? `No notes found matching "${query}"` : null;
     res.render('notes', {
