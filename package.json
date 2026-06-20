@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "test": "mocha"
+    "test": "mocha test/**/*.test.js --exit"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
